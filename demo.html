@@ -17,7 +17,7 @@
     <canvas id="gauge_demo3" width="60" height="400"></canvas>
   </body>
   <script>
-  var HPg = new HPgauge(document.getElementById("gauge_demo"));
+  var HPg = new HPgauge(document.getElementById("gauge_demo"),{col_marker:"#1e1d3d"});
   var HPg2 = new HPgauge(document.getElementById("gauge_demo2"));
   var HPg3 = new HPgauge(document.getElementById("gauge_demo3"));
 
@@ -25,7 +25,7 @@
     HPg.update(Math.random() * 250);
     HPg2.update(Math.random() * 250);
     HPg3.update(Math.random() * 250);
-  }, 5000);
+  }, 4000);
 
 
   </script>

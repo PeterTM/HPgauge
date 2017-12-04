@@ -1,7 +1,7 @@
 function HPgauge(canvas, options) {
     this.options = Util.extend({}, HPgauge.defaultOptions, options);
     this.canvas = canvas;
-    this.value = 143.2565258;
+    this.value = 1.0;
     this.curvalue = 0.0
     this.upincrementer = .1;
     this.dnincrementer = .1;
@@ -12,12 +12,17 @@ function HPgauge(canvas, options) {
 HPgauge.defaultOptions = {
       range_high: 250,
       range_low: 0,
-      warn_high: 230,
-      warn_low: 50,
-      norm_high: 200,
-      norm_low: 80,
-      ideal_high: 150,
-      ideal_low: 100,
+      warn_high: 200,
+      warn_low: 100,
+      norm_high: 100,
+      norm_low: 0,
+      ideal_high: 75,
+      ideal_low: 35,
+      col_warn: "#6c6c6c",
+      col_norm: "#FFF",
+      col_ideal: "#00ffd1",
+      col_marker: "#000",
+      col_alarm: "#F00",
     };
 
 HPgauge.prototype.animate = function() {
@@ -61,19 +66,20 @@ HPgauge.prototype.redraw = function(canvas) {
   markerheight = Math.round((this.canvas.height/10))
 
   //Draw Basic Bar
-  ctx.fillRect(startwidth,startheight,barwidth,barheight);
+  ctx.fillRect(startwidth,startheight-1,barwidth,barheight+2);
+
 
 
   //Draw Warning Range
-  ctx.fillStyle="#6c6c6c"
+  ctx.fillStyle=this.options.col_warn;
   ctx.fillRect(startwidth+1,warn_start,barwidth-2,warn_height);
 
   //Draw Normal Range
-  ctx.fillStyle="#FFF"
+  ctx.fillStyle=this.options.col_norm;
   ctx.fillRect(startwidth+1,normal_start,barwidth-2,normal_height);
 
   //Draw Ideal Range
-  ctx.fillStyle="#00ffd1";
+  ctx.fillStyle=this.options.col_ideal;
   ctx.fillRect(startwidth+1,ideal_start,barwidth-2,ideal_height);
 
   //Draw Triangle
@@ -106,7 +112,7 @@ HPgauge.prototype.redraw = function(canvas) {
 
 HPgauge.prototype.drawmarker = function(marker_pos) {
   var ctx = this.canvas.getContext("2d");
-  ctx.fillStyle="#000";
+  ctx.fillStyle=this.options.col_marker;
 
   startpoint_h = startwidth - 2
   startpoint_v = marker_pos
@@ -122,32 +128,39 @@ HPgauge.prototype.drawalarm = function(level) {
   var ctx = this.canvas.getContext("2d");
 
   alarmwidth = Math.round(barwidth*1.4);
-  alarmheight = Math.round(barwidth*1.2);
+  alarmheight = Math.round(barwidth*1.4);
   startpoint_h = Math.round(startwidth + (barwidth/2) - (alarmwidth/2))
   startpoint_v = Math.round(startheight*0.2)
 
-  ctx.fillStyle="#F00";
+  ctx.fillStyle=this.options.col_alarm;
   ctx.strokeStyle="#000";
-  ctx.font = "15px Arial";
+  var fontsize = this.canvas.width * 0.25
+  ctx.font = (fontsize|0)+ "px Arial";
   ctx.textAlign = "center";
   console.log(startpoint_h, startpoint_v)
   ctx.beginPath();
-  ctx.moveTo(startpoint_h, startpoint_v);
-  ctx.lineTo(startpoint_h + alarmwidth, startpoint_v);
-  ctx.lineTo(startpoint_h + alarmwidth, startpoint_v + alarmheight);
-  ctx.lineTo(startpoint_h , startpoint_v + alarmheight);
-  ctx.lineTo(startpoint_h , startpoint_v);
+  ctx.moveTo(startpoint_h, startpoint_v+alarmheight);
+  ctx.lineTo(startpoint_h + alarmwidth, startpoint_v+alarmheight);
+  ctx.lineTo(startpoint_h + (alarmwidth/2), startpoint_v);
+  ctx.lineTo(startpoint_h , startpoint_v+alarmheight);
+
+  //ctx.lineTo(startpoint_h + alarmwidth, startpoint_v);
+  //ctx.lineTo(startpoint_h + alarmwidth, startpoint_v + alarmheight);
+  //ctx.lineTo(startpoint_h , startpoint_v + alarmheight);
+  //ctx.lineTo(startpoint_h , startpoint_v);
   ctx.strokeStyle="#000";
   ctx.fill();
   ctx.stroke();
   ctx.lineWidth=2;
+  ctx.textAlign = "center";
   ctx.fillStyle="#000";
-  ctx.fillText(1,startwidth + (barwidth/2),startheight*0.6);
+  ctx.fillText("!",startwidth + (barwidth/2)+1,startheight*0.75);
 };
 
 HPgauge.prototype.drawtext = function(value, x,y) {
   var ctx = this.canvas.getContext("2d");
-  ctx.font = "18px Arial";
+  var fontsize = this.canvas.width * 0.3
+  ctx.font = (fontsize|0)+"px Arial";
   ctx.textAlign = "center";
   ctx.fillStyle="#0012ff";
   ctx.fillText(value.toFixed(2),x,y);
@@ -178,16 +191,4 @@ var Util = {
       }
       return arguments[0];
     },
-    binarySearch: function(data, value) {
-      var low = 0,
-          high = data.length;
-      while (low < high) {
-        var mid = (low + high) >> 1;
-        if (value < data[mid][0])
-          high = mid;
-        else
-          low = mid + 1;
-      }
-      return low;
-    }
   };
