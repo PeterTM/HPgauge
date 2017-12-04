@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="HPgauge.js"></script>
+    <style>
+    body {
+    background-color: lightgrey;
+    }
+  </style>
+
+    <title>title</title>
+  </head>
+  <body>
+    <canvas id="gauge_demo" width="60" height="400"></canvas>
+    <canvas id="gauge_demo2" width="60" height="400"></canvas>
+    <canvas id="gauge_demo3" width="60" height="400"></canvas>
+  </body>
+  <script>
+  var HPg = new HPgauge(document.getElementById("gauge_demo"));
+  var HPg2 = new HPgauge(document.getElementById("gauge_demo2"));
+  var HPg3 = new HPgauge(document.getElementById("gauge_demo3"));
+
+  setInterval(function(){
+    HPg.update(Math.random() * 250);
+    HPg2.update(Math.random() * 250);
+    HPg3.update(Math.random() * 250);
+  }, 5000);
+
+
+  </script>
+</html>
